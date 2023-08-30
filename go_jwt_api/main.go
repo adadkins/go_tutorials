@@ -45,7 +45,6 @@ func (a *App) RegisterRoutes() {
 	userSubRouter := r.PathPrefix("/user").Subrouter()
 	userSubRouter.Use(auth.Auth)
 	//userSubRouter.HandleFunc("/", a.GetUser).Methods("GET")
-	userSubRouter.HandleFunc("/", a.RegisterUser).Methods("PUT")
-
+	userSubRouter.HandleFunc("/", a.UpdateUser).Methods("PUT")
 	a.Router = r
 }

@@ -24,22 +24,20 @@ func (a *App) GenerateToken(w http.ResponseWriter, r *http.Request) {
 	// check if email exists
 	user, err := a.datalayer.GetUser(request.Email)
 	if err != nil {
-		//return 404 or something?
+		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 	// check if password correct
 	credentialError := user.CheckPassword(request.Password)
 	if credentialError != nil {
-		// context.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
-		// context.Abort()
+		http.Error(w, credentialError.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	// generate a jwt
 	tokenString, err := auth.GenerateJWT(user.Email, user.Username)
 	if err != nil {
-		// context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		// context.Abort()
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	w.Write([]byte(fmt.Sprintf("{jwt: \"%v\"}", tokenString)))
